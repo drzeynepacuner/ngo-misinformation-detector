@@ -6,18 +6,16 @@ import numpy as np
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizerFast
 from lime.lime_text import LimeTextExplainer
 
-# === Load model and tokenizer ===
-model_path = os.path.abspath("../models/distilbert-misinformation")
-
+# === Load model and tokenizer from Hugging Face ===
 model = DistilBertForSequenceClassification.from_pretrained(
-    model_path,
-    local_files_only=True,
+    "doomzoom/distilbert-misinformation",
     use_safetensors=True
 )
-tokenizer = DistilBertTokenizerFast.from_pretrained(model_path)
+tokenizer = DistilBertTokenizerFast.from_pretrained("doomzoom/distilbert-misinformation")
 
 # === LIME setup ===
 class_names = ["Fake/Misleading", "Real/Trustworthy"]
+
 
 def predict_proba(texts):
     inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
@@ -26,12 +24,14 @@ def predict_proba(texts):
         probs = torch.nn.functional.softmax(outputs.logits, dim=1)
     return probs.numpy()
 
+
 explainer = LimeTextExplainer(class_names=class_names)
 
-# === Streamlit app layout ===
-st.set_page_config(page_title="NGO Misinformation Detector", layout="centered")
+# === Streamlit UI ===
+st.set_page_config(page_title="NGO Misinformation Risk Detector", layout="centered")
 st.title("🧠 NGO Misinformation Risk Detector")
-st.markdown("Paste a message or article below. This tool will predict how likely it is to be misleading or risky — and why.")
+st.markdown(
+    "Paste a message or article below. This tool will predict how likely it is to be misleading — and explain why.")
 
 text_input = st.text_area("📝 Paste your content here:", height=200)
 
@@ -55,9 +55,9 @@ if st.button("🔍 Analyze"):
 
         st.markdown("#### 🧠 Why this result?")
         explanation = explainer.explain_instance(text_input, predict_proba, num_features=8, labels=[predicted_class])
-        lime_html = explanation.as_html()
 
-        # Inject custom CSS to override inline LIME styles
+        # Style override for dark mode
+        lime_html = explanation.as_html()
         custom_style = """
         <style>
             body, html {
@@ -77,6 +77,4 @@ if st.button("🔍 Analyze"):
             }
         </style>
         """
-
-        # Show explanation with custom style applied
         st.components.v1.html(custom_style + lime_html, height=400, scrolling=True)
