@@ -18,6 +18,5 @@ A machine learning-based assistant for NGOs to flag potentially misleading or ri
 - Interactive Streamlit app
 <<<<<<< HEAD
 - Report (PDF)
-=======
-- Consultant-style report (PDF)
+
 >>>>>>> 28448f2 (Add Streamlit app and project files)
