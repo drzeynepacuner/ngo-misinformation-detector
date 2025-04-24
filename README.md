@@ -16,7 +16,6 @@ A machine learning-based assistant for NGOs to flag potentially misleading or ri
 ## Outputs
 - Misinformation risk classifier (NLP model)
 - Interactive Streamlit app
-<<<<<<< HEAD
 - Report (PDF)
 
->>>>>>> 28448f2 (Add Streamlit app and project files)
+
