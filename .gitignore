@@ -1,0 +1,9 @@
+# Ignore models and data folders
+/models/
+/data/
+
+/__pycache__/
+/*.pyc
+.DS_Store
+*.log
+.env
